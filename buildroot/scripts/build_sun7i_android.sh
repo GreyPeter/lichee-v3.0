@@ -14,6 +14,7 @@ set -e
 
 function build_buildroot()
 {
+  local archive="gcc-linaro.tar.bz2"
     local tooldir="${LICHEE_BR_OUT}/external-toolchain"
     mkdir -p ${tooldir}
     if [ -f ${tooldir}/.installed ] ; then
@@ -21,8 +22,12 @@ function build_buildroot()
     else
         printf "installing external toolchain\n"
         printf "please wait for a few minutes ...\n"
+        # Extract correct cross compiler for MacOS
+  if [[ $LICHEE_HOST_PLATFORM == 'darwin' ]]; then
+      archive="gnueabi.tbz2"
+    fi
         tar --strip-components=1 \
-            -jxf ${LICHEE_BR_DIR}/dl/gcc-linaro.tar.bz2 \
+            -jxf ${LICHEE_BR_DIR}/dl/${archive} \
             -C ${tooldir}
         [ $? -eq 0 ] && touch ${tooldir}/.installed
     fi
@@ -38,4 +43,3 @@ case "$1" in
         build_buildroot
         ;;
 esac
-
