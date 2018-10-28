@@ -24,8 +24,8 @@ function build_buildroot()
         printf "please wait for a few minutes ...\n"
         # Extract correct cross compiler for MacOS
   if [[ $LICHEE_HOST_PLATFORM == 'darwin' ]]; then
-    archive="gcc-arm-none-eabi-4_9-2015q3-20150921-mac.tar.bz2"
-#      archive="gnueabi.tbz2"
+#    archive="gcc-arm-none-eabi-4_9-2015q3-20150921-mac.tar.bz2"
+      archive="gnueabi.tbz2"
     fi
         tar --strip-components=1 \
             -jxf ${LICHEE_BR_DIR}/dl/${archive} \
