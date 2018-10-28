@@ -13,22 +13,35 @@
 #   1. Board option is useless.
 #   2. We Only support to copy u-boot.bin to common directory right now.
 
-cpu_cores=`cat /proc/cpuinfo | grep "processor" | wc -l`
+cpu_cores=1
+if [[ $LICHEE_HOST_PLATFORM == 'darwin' ]]; then
+	cpu_cores=`sysctl -a | grep machdep.cpu | grep core_count | cut -d: -f2`
+else
+	cpu_cores=`cat /proc/cpuinfo | grep "processor" | wc -l`;
+fi
+
 if [ ${cpu_cores} -le 8 ] ; then
     jobs=${cpu_cores}
 else
     jobs=`expr ${cpu_cores} / 2`
 fi
 
+if [[ $LICHEE_HOST_PLATFORM == 'darwin' ]]; then
+#	export CROSS_COMPILE=arm-none-eabi-
+	export CROSS_COMPILE=arm-linux-gnueabihf-
+else
+	export CROSS_COMPILE=arm-linux-gnueabi-
+fi
+
 function build_uboot()
 {
     case "$1" in
         clean)
-            make distclean CROSS_COMPILE=arm-linux-gnueabi-
+            make distclean CROSS_COMPILE=${CROSS_COMPILE}
             ;;
         *)
-            make distclean CROSS_COMPILE=arm-linux-gnueabi-
-            make -j${jobs} ${LICHEE_CHIP} CROSS_COMPILE=arm-linux-gnueabi-
+            make distclean CROSS_COMPILE=${CROSS_COMPILE}
+            make -j${jobs} ${LICHEE_CHIP} CROSS_COMPILE=${CROSS_COMPILE}
             [ $? -ne 0 ] && exit 1
             cp -f u-boot.bin ../out/${LICHEE_PLATFORM}/common/
             ;;
