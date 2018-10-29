@@ -1,1 +1,0 @@
-obj-y += sunxi_ion.o sunxi_tiler_heap.o
